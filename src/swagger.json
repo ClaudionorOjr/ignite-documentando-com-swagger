@@ -1,0 +1,272 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Users API",
+    "description": "API for creating and listing users. In addition to being able to turn an admin user.",
+    "version": "1.0.0",
+    "contact": {
+      "email": "claudionorojr@hotmail.com"
+    }
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Create a new user",
+        "description": "Pass an email and name to create a new user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "Username",
+                  "email": "user@email.com"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/User"
+                },
+                "example": {
+                  "id": "f72daa07-6e2c-421c-9c3e-c41819954d1c",
+                  "name": "Username",
+                  "email": "user@email.com",
+                  "admin": false,
+                  "created_at": "2022-08-31T00:59:01.229Z",
+                  "updated_at": "2022-08-31T00:59:01.229Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User does exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Error"
+                },
+                "example": {
+                  "error": "User does exists!"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["User"],
+        "summary": "List all users",
+        "description": "`admin` user can search all users.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "header",
+            "description": "User id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  }
+                },
+                "example": [
+                  {
+                    "id": "00ada0e1-1c4b-4c29-ac21-67299db81a69",
+                    "name": "Admin",
+                    "email": "admin@email.com",
+                    "admin": true,
+                    "created_at": "2022-08-31T00:59:10.229Z",
+                    "updated_at": "2022-08-31T00:59:31.229Z"
+                  },
+                  {
+                    "id": "f72daa07-6e2c-421c-9c3e-c41819954d1c",
+                    "name": "Username",
+                    "email": "user@email.com",
+                    "admin": false,
+                    "created_at": "2022-08-31T00:59:01.229Z",
+                    "updated_at": "2022-08-31T00:59:01.229Z"
+                  }
+                ]
+              }
+            } 
+          },
+          "400": {
+            "description": "No permission.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Error"
+                },
+                "example": {
+                  "error": "No permission!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Show profile user",
+        "description": "Returns the user profile corresponding to the id passed in the route.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/User"
+                },
+                "example": {
+                  "id": "f72daa07-6e2c-421c-9c3e-c41819954d1c",
+                  "name": "Username",
+                  "email": "user@email.com",
+                  "admin": false,
+                  "created_at": "2022-08-31T00:59:01.229Z",
+                  "updated_at": "2022-08-31T00:59:01.229Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Error"
+                },
+                "example": {
+                  "error": "User does not exists!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Turn user admin",
+        "description": "Make an admin user.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/User"
+                },
+                "example": {
+                  "id": "00ada0e1-1c4b-4c29-ac21-67299db81a69",
+                  "name": "Admin",
+                  "email": "admin@email.com",
+                  "admin": true,
+                  "created_at": "2022-08-31T00:59:10.229Z",
+                  "updated_at": "2022-08-31T00:59:31.229Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Error"
+                },
+                "example": {
+                  "error": "User does not exists!"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "admin":{
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "Date"
+        },
+        "updated_at": {
+          "type": "Date"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
